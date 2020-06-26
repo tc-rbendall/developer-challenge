@@ -14,15 +14,15 @@ public class Product {
         title = _title;
         try {
             kCal = Float.parseFloat(_kCal);
-        } catch (Exception e) {
+        } catch (Exception ex) {
             kCal = null;
-            if (Globals.DebugEnabled) System.out.println("Error: kCal, src = [" + _kCal + "]");
+            if (Globals.DebugEnabled) System.out.println("Error: Product.kCal, src = [" + _kCal + "]: " + ex.getMessage());
         }
         try {
             unitPrice = Float.parseFloat(_unitPrice);
-        } catch (Exception e) {
+        } catch (Exception ex) {
             unitPrice = null;
-            if (Globals.DebugEnabled) System.out.println("Error: unitPrice, src = [" + _unitPrice + "]");
+            if (Globals.DebugEnabled) System.out.println("Error: Product.unitPrice, src = [" + _unitPrice + "]: " + ex.getMessage());
         }
         description = _description;
     }
@@ -38,14 +38,26 @@ public class Product {
     // render this item out as a json string
     public String renderAsJSON() {
         String output = "{\n";
+
+        /*
+        if (!title.equals("")) output += "\"title\": \"" + title + "\",\n";
         if (!code.equals("")) output += "\"code\": \"" + code + "\",\n";
-        if (!output.equals("")) output += "\"title\": \"" + title + "\",\n";
         if (kCal != null) output += "\"kcal_per_100g\": " + kCal.toString() + ",\n";
         if (unitPrice != null) output += "\"unit_price\": " + unitPrice.toString() + ",\n";
         if (!description.equals("")) output += "\"description\": \"" + description + "\"\n"; // no trailing comma
+        */
+
+        // spec only allows for optionally omitting kcal
+        output += "\"title\": \"" + title + "\",\n";
+        output += "\"code\": \"" + code + "\",\n";
+        if (kCal != null) output += "\"kcal_per_100g\": " + kCal.toString() + ",\n";
+        output += "\"unit_price\": " + unitPrice.toString() + ",\n";
+        output += "\"description\": \"" + description + "\"\n"; // no trailing comma
+
+
         output += "}";
 
-        if (Globals.DebugEnabled) System.out.println("item.renderAsJSon() : " + output);
+        if (Globals.DebugEnabled) System.out.println("Product.renderAsJSon() : " + output);
 
         return output;
     }
@@ -54,40 +66,8 @@ public class Product {
         return code;
     }
 
-    public void setCode(String code) {
-        this.code = code;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public Float getkCal() {
-        return kCal;
-    }
-
-    public void setkCal(Float kCal) {
-        this.kCal = kCal;
-    }
-
     public Float getUnitPrice() {
         return unitPrice;
-    }
-
-    public void setUnitPrice(Float unitPrice) {
-        this.unitPrice = unitPrice;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
     }
 }
 

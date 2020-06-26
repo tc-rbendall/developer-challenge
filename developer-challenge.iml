@@ -10,5 +10,7 @@
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" exported="" name="lib" level="project" />
+    <orderEntry type="library" name="org.jsoup:jsoup:1.12.2" level="project" />
+    <orderEntry type="library" name="org.projectlombok.test:test-maven-lombok:1.14.8.0" level="project" />
   </component>
 </module>

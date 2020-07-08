@@ -1,6 +1,7 @@
 package com.truecommerce.model;
 
-import com.truecommerce.Globals;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.truecommerce.controller.Globals;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -11,14 +12,13 @@ import java.util.ArrayList;
 public class Inventory {
     private ArrayList<Product> products;
     static float VATRate = 0.2f;
+    @JsonProperty("net")
     Float net;
+    @JsonProperty ("gross")
     Float gross;
+    @JsonProperty ("vat")
     Float vat;
 
-    public Inventory() {
-        products = new ArrayList<Product>();
-        net = gross = vat = 0f;
-    }
 
     public int getProductCount() {
         return products.size();
@@ -30,7 +30,7 @@ public class Inventory {
             gross += newProduct.getUnitPrice();
             vat += newProduct.getUnitPrice() * VATRate;
             net = gross / (1f + VATRate);
-            net = (int)(100f * net) / 100f;
+            net = (int)(100f * net + 0.5f) / 100f; // rounding following the divide
 
             if (Globals.DebugEnabled) System.out.println("Inventory.addProduct() : [" + newProduct.getCode() + "]");
 
@@ -64,9 +64,9 @@ public class Inventory {
         String output = "";
 
         output = "\"total\": {\n";
-        output += "\"net\": " + net + ",\n";
-        output += "\"vat\": " + vat + ",\n";
-        output += "\"gross\": " + gross + "\n";
+        output += "\"net\": " + String.format("%.2f", net) + ",\n";
+        output += "\"vat\": " + String.format("%.2f", vat) + ",\n";
+        output += "\"gross\": " + String.format("%.2f", gross) + "\n";
         output += "}\n";
 
         if (Globals.DebugEnabled) System.out.println("Inventory.renderTotalsAsJSON() : " + output);
@@ -93,7 +93,7 @@ public class Inventory {
             Document doc = Jsoup.connect(siteHomePage + landingPage).get();
             System.out.println(" done.");
             System.out.print("Extracting product links...");
-            Elements links = doc.select("a[href]");
+            Elements links = doc.select("a[href]"); // discovered after the fact that selecting within a <p> block would save all the de-dupe code below. d'oh!
             System.out.println(" done.");
 
             // ensure we don't duplicate the links we'll follow

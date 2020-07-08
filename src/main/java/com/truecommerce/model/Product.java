@@ -1,12 +1,22 @@
 package com.truecommerce.model;
 
-import com.truecommerce.Globals;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.*;
+import com.truecommerce.controller.Globals;
+
+@JsonInclude (JsonInclude.Include.NON_EMPTY)
 
 public class Product {
+    @JsonProperty ("code")
     private String code;
+    @JsonProperty ("title")
     private String title;
+    @JsonProperty ("kcal_per_100g")
     private Float kCal;
+    @JsonProperty ("unit_price")
     private Float unitPrice;
+    @JsonProperty ("description")
     private String description;
 
     public Product(String _code, String _title, String _kCal, String _unitPrice, String _description) {
@@ -43,23 +53,35 @@ public class Product {
         if (!title.equals("")) output += "\"title\": \"" + title + "\",\n";
         if (!code.equals("")) output += "\"code\": \"" + code + "\",\n";
         if (kCal != null) output += "\"kcal_per_100g\": " + kCal.toString() + ",\n";
-        if (unitPrice != null) output += "\"unit_price\": " + unitPrice.toString() + ",\n";
+        if (unitPrice != null) output += "\"unit_price\": " + String.format("%. 2f", unitPrice) + ",\n";
         if (!description.equals("")) output += "\"description\": \"" + description + "\"\n"; // no trailing comma
         */
 
+        /*
         // spec only allows for optionally omitting kcal
         output += "\"title\": \"" + title + "\",\n";
         output += "\"code\": \"" + code + "\",\n";
         if (kCal != null) output += "\"kcal_per_100g\": " + kCal.toString() + ",\n";
-        output += "\"unit_price\": " + unitPrice.toString() + ",\n";
+        output += "\"unit_price\": " + String.format("%.2f", unitPrice) + ",\n";
         output += "\"description\": \"" + description + "\"\n"; // no trailing comma
 
-
         output += "}";
+        */
 
         if (Globals.DebugEnabled) System.out.println("Product.renderAsJSon() : " + output);
 
-        return output;
+
+        ObjectMapper mapper = new ObjectMapper();
+        String json = "";
+        try {
+            ObjectWriter writer = mapper.writer().withDefaultPrettyPrinter();
+            json = writer.writeValueAsString(this);
+            if (Globals.DebugEnabled) System.out.println("Product.renderAsJSon() : " + json);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return json; // output
     }
 
     public String getCode() {

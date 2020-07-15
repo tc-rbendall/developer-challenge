@@ -1,6 +1,6 @@
 package com.truecommerce.model;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.*;//JsonProperty;
 import com.truecommerce.controller.Globals;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
